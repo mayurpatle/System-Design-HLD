@@ -1,0 +1,1 @@
+# Read the Postgres docs chapter on Concurrency Control (postgresql.org/docs/current/mvcc.html).

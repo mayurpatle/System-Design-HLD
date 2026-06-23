@@ -1,0 +1,1 @@
+### Watch: 'Postgres MVCC and the future' (any recent PostgresConf talk on YouTube; the topic recurs every year).

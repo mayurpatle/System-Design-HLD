@@ -1,2 +1,6 @@
-package org.example.behavioralPattern.Strategy.PaymentMethods.Solution.Strategy;public class PaymentStrategy {
+package org.example.behavioralPattern.Strategy.PaymentMethods.Solution.Strategy;
+
+public interface PaymentStrategy {
+    void pay(double   amt ) ;
+
 }
