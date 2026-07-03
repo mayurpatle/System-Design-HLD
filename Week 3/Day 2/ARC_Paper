@@ -1,0 +1,29 @@
+# ARC Paper — Abstract Skim
+
+*Megiddo & Modha, "ARC: A Self-Tuning, Low Overhead Replacement Cache," USENIX FAST '03 (IBM Almaden).*
+
+Abstract-level only — the mechanics, not the math. Cross-refs: `cache-eviction-policies.md` (where ARC sits among policies) and `w-tinylfu-eviction-comparison.md` (why Caffeine *didn't* pick it).
+
+## What the abstract claims
+
+The setting is classic demand paging with **uniform page sizes**. The pitch for ARC is a short list of properties, each of which is a jab at a weakness of the alternatives:
+
+- **Self-tuning, online.** ARC continually and automatically balances the **recency** and **frequency** components of the workload, adapting as access patterns shift — no human-set knob.
+- **Learning rule.** It revises its own assumptions about the workload on the fly rather than assuming a fixed distribution.
+- **"Empirically universal."** This is the paper's headline term of art: ARC matches a fixed policy *even when that fixed policy is given the best possible workload-specific parameter chosen offline with hindsight*. It competes with an unfairly-advantaged opponent and ties.
+- **Low overhead, O(1).** Simple to implement and, **like LRU, constant complexity per request** — no per-access sorting or scanning.
+- **Scan-resistant.** A one-off sequential flood doesn't blow away the working set (the thing plain LRU fails at).
+- **Beats LRU** across a wide range of workloads and cache sizes.
+
+## The one-line mental model (conceptual, no math)
+
+ARC keeps **two lists** — one for pages seen **once** (recency) and one for pages seen **more than once** (frequency) — plus two **"ghost" lists** that remember the keys it *recently evicted* from each. Those ghost hits are the feedback signal: a miss that hits the recency ghost list says "I'm under-weighting recency, grow it"; a miss that hits the frequency ghost list says the opposite. A single adaptive parameter slides the boundary between the two in response. Net effect: **behaves like LRU during workload transitions, like LFU during stable phases**, without being told which regime it's in.
+
+## Why it matters / interview angle
+
+Before ARC, tuning a cache meant picking a parameter (the *K* in LRU-K, the probationary queue size in 2Q) and hoping your workload matched it. ARC's contribution is **removing the knob** — self-tuning that's provably competitive with the best hand-tuned static choice, at LRU's cost and complexity.
+
+The catch to state in the same breath (it's why you rarely see ARC in OSS despite it being excellent): it's **IBM-patented**, and it keeps **ghost entries** (~2× metadata). That combination is exactly why Caffeine reached for W-TinyLFU instead — same recency+frequency goal, no patent, smaller footprint, no non-resident keys. ARC's famous production home is **ZFS**.
+
+---
+Source: USENIX FAST '03 — `usenix.org/conference/fast-03/arc-self-tuning-low-overhead-replacement-cache`.

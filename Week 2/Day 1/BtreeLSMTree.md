@@ -1,10 +1,6 @@
 ---
 
-## title: Storage Engines — B+ Tree vs LSM Tree
-tags: [system-design, databases, storage-engines, b-plus-tree, lsm-tree]
-day: 8
-status: in-progress
-created: 2026-06-23
+
 
 # Storage Engines: B+ Tree vs LSM Tree
 
