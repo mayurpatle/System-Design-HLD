@@ -1,0 +1,264 @@
+# KIP-500 — Replace ZooKeeper with a Self-Managed Metadata Quorum
+
+> Notes on the Kafka Improvement Proposal by Colin McCabe (2019, status: Accepted).
+> Source: https://cwiki.apache.org/confluence/display/KAFKA/KIP-500
+> Scope here: Motivation + Architecture/design overview.
+> Note the KIP is deliberately a *vision document* — it leaves out RPC formats and on-disk
+> formats, deferring those to follow-on KIPs (595, 631, and friends).
+
+---
+
+## 1. Motivation
+
+Two goals, stated plainly at the top: **manage metadata more scalably and robustly (to support
+far more partitions)**, and **simplify deployment and configuration**. Everything else follows
+from those.
+
+### 1.1 The deep problem: Kafka didn't eat its own dog food
+
+The KIP opens with a lovely bit of self-criticism. Kafka spends its entire existence telling
+users that **state should be managed as a stream of events** — a single offset describes your
+position, consumers catch up by replaying, and the log gives you a clean total order so
+everyone moves along **one timeline**.
+
+**Kafka itself did not do this with its own metadata.** It treated metadata changes as
+isolated, unrelated mutations.
+
+Concretely, in the ZooKeeper world:
+
+- The controller **pushes** state-change notifications (`LeaderAndIsr`, `UpdateMetadata`) out to
+  brokers. A broker can **receive some of these changes but not others**. The controller retries
+  a few times and then **gives up** — leaving brokers in a **divergent state**. There's no
+  offset, no ordering, no way to detect the gap.
+- **The controller's in-memory state and the ZooKeeper state routinely disagree.** ZK is
+  nominally the store of record, but when a partition leader updates its ISR directly in ZK,
+  the controller often doesn't learn about it for *many seconds*.
+- **ZooKeeper watches are a bad event-log substitute.** They're one-shot, and the number you can
+  set is limited for performance reasons. When a watch fires, it tells you only *"something
+  changed"* — not *what*. By the time the controller re-reads the znode and re-arms the watch,
+  the state may have changed again. If no watch is set, the change may be **missed entirely**.
+- In some cases, **restarting the controller was the only way to fix the discrepancy.** (If
+  you've operated Kafka, this line lands.)
+
+**The fix, stated as a principle:** *store metadata in Kafka itself, as an event log.* Brokers
+stop being pushed at and start **consuming metadata events** — which means changes always arrive
+**in the same order**, gaps are impossible (you have an offset), and a broker can cache metadata
+in a local file and on restart **only fetch the delta**, not the entire cluster state. That
+delta-based catch-up is the thing that unlocks *far more partitions with less CPU*.
+
+### 1.2 The shallow-but-real problem: two systems is one too many
+
+- ZooKeeper is a **separate system** with its own config syntax, tooling, and deployment
+  patterns. Operators must learn to run **two** distributed systems to run one.
+- **Security is easy to get wrong** precisely *because* the configs are separate. The KIP's
+  example: an admin configures SASL on Kafka, believes the cluster is secured — and hasn't
+  realized ZooKeeper needs its own, separate security configuration. Unifying gives one
+  security model.
+- Removing the dependency makes a **single-node Kafka** possible, which is great for someone
+  who just wants to try Kafka without standing up multiple daemons.
+
+---
+
+## 2. Architecture
+
+### 2.1 Before → After
+
+**Before:** N brokers + an external quorum of ZK nodes (typical small cluster: 4 brokers, 3 ZK).
+One broker is elected **controller**; after election it **loads its entire state from
+ZooKeeper**, then **pushes** updates outward to the other brokers.
+
+The KIP is candid that its own "before" diagram is misleading in two ways, and both are the real
+pain:
+1. **Other brokers talk to ZooKeeper too** — not just the controller. (Too many lines to draw.)
+2. **External CLI tools can modify ZooKeeper directly, bypassing the controller entirely.**
+
+Together, those are exactly why you can never be sure the controller's memory reflects the truth
+in ZK.
+
+**After:** three **controller nodes** replace the three ZK nodes. They run in **separate JVMs**
+from the brokers (though not necessarily on separate machines — co-locating is allowed, just as
+people co-locate ZK today). The controllers **elect a leader among themselves via Raft**, with
+**no external system involved**.
+
+**And the arrows reverse.** Instead of the controller *pushing* to brokers, **brokers pull
+metadata from the leader**. Push → pull is the single most important architectural change in
+the whole proposal.
+
+### 2.2 The Controller Quorum
+
+- The controller nodes form a **Raft quorum** that manages **the metadata log**.
+- That log holds **everything ZooKeeper used to hold**: topics, partitions, ISRs,
+  configurations, and so on — as an ordered sequence of *changes*.
+- The Raft leader is called the **active controller**. It **handles all RPCs from brokers**.
+- The **follower controllers replicate the log** and act as **hot standbys**.
+- **The failover win:** because followers already track the latest state, **controller failover
+  no longer requires the lengthy state-reloading period**. Under ZK, a newly elected controller
+  had to slurp the whole world out of ZooKeeper before it could function — the notorious
+  multi-second (or worse, at high partition counts) failover stall. Now the standby is already
+  warm.
+- **Same majority rules as ZooKeeper:** 3 controllers survive 1 failure, 5 survive 2. You don't
+  escape quorum math by dropping ZK — you just stop running a second cluster to get it.
+- Controllers **periodically snapshot metadata to disk**. Conceptually like log compaction, but
+  the code path differs: state can be read straight **from memory** rather than re-read from
+  the log on disk.
+
+### 2.3 Broker Metadata Management — the `MetadataFetch` API
+
+- Brokers **fetch** updates from the active controller via a new **`MetadataFetch`** API.
+- It works **like a normal consumer fetch**: the broker tracks the **offset** of the last update
+  it consumed and asks only for what's newer. (This is the "metadata as an event log" idea made
+  concrete — the broker is literally a consumer.)
+- Brokers **persist fetched metadata to disk**, so startup is fast **even with hundreds of
+  thousands or millions of partitions**. (The KIP explicitly flags this as an optimization that
+  could be deferred to a later version.)
+- Normally the broker fetches only **deltas**. If it's **too far behind** or has **no cached
+  metadata at all**, the controller sends a **full metadata image** instead.
+- **`MetadataFetch` doubles as the broker's heartbeat** — the fetch itself tells the controller
+  the broker is alive. One mechanism, two jobs. (Very Raft-ish: `AppendEntries` is also the
+  heartbeat.)
+- The KIP notes this machinery should eventually serve **clients** too, not just brokers —
+  there are far more clients than brokers, and incremental metadata delivery matters even more
+  as partition counts grow. Deferred to follow-on KIPs.
+
+### 2.4 Broker registration and the fencing fix
+
+Under ZK, a broker registers itself with ZooKeeper at startup, which does two things: tells the
+broker whether it's been elected controller, and tells everyone else how to reach it.
+
+Post-ZK, **brokers register with the controller quorum.** And the failure semantics change in a
+way worth understanding:
+
+- **Before:** the controller removed a broker when its **ZooKeeper session** was lost.
+- **After:** the active controller removes a broker that **hasn't sent a `MetadataFetch`
+  heartbeat** for long enough.
+
+**Why this matters — the KIP's own example, and it's a good one:** in the ZK world, a broker
+that could still reach ZooKeeper but was **partitioned from the controller** would happily keep
+serving client requests while **receiving no metadata updates**. So a producer using `acks=1`
+could **keep producing to a "leader" that was no longer the leader** — because that broker never
+received the controller's `LeaderAndIsrRequest` moving leadership away. Silent data loss.
+
+**Post-ZK, cluster membership is *integrated with* metadata updates.** A broker that can't
+receive metadata updates **cannot remain a member of the cluster**. Partitioned from the
+controller ⇒ removed. This is a genuine correctness improvement, not just an ops nicety.
+
+### 2.5 Broker states
+
+| State | Meaning |
+|---|---|
+| **Offline** | Not running, or doing single-node startup work (JVM init, log recovery). |
+| **Fenced** | **Does not respond to client RPCs.** Entered while starting up and fetching the newest metadata, and **re-entered whenever it can't reach the active controller.** Fenced brokers are **omitted from the metadata sent to clients.** |
+| **Online** | Ready to serve clients. |
+| **Stopping** | Received `SIGINT`. Still running, but **partition leaders are being migrated off it.** The active controller eventually tells it to go offline via a special result code in the `MetadataFetchResponse` — or it shuts down anyway if leaders can't be moved within a set time. |
+
+**Fenced is the state to remember.** It's the mechanism that prevents the stale-leader-accepting-
+writes bug described above. A broker that has lost touch with the controller **takes itself out
+of service** rather than serving possibly-stale leadership information.
+
+### 2.6 API and tooling consequences
+
+- Operations formerly done by **writing directly to ZooKeeper** become **controller operations**
+  — changing configs, altering ACLs (with the default Authorizer), etc.
+- New clients send these **straight to the active controller**. For backwards compatibility, an
+  old client hitting a random broker still works: **the broker forwards the request to the
+  active controller.**
+- **New controller APIs** replace ZK-write paths. The example given: today, a partition leader
+  wanting to change its **ISR** modifies ZooKeeper directly; post-ZK it makes an **RPC to the
+  active controller**. (This is KIP-497.)
+- **Tools must stop touching ZooKeeper.** Groundwork was already laid years earlier by KIP-4.
+
+---
+
+## 3. Migration: the "bridge release"
+
+You can't flip this switch atomically, so:
+
+1. **Bridge release** — ZooKeeper still exists, but the dependency is **well-isolated**: as much
+   ZK access as possible is confined to the controller; brokers, clients, and tools stop
+   touching it.
+2. **Upgrade path is two-hop and mandatory:** any version → **bridge release** → post-ZK release.
+   You cannot jump straight across.
+3. **Start the controller quorum**, configured with the ZK addresses. The active controller
+   writes itself into `/brokers/ids` and **overwrites the `/controller` znode with its own ID**
+   — which **prevents any un-upgraded broker from becoming controller** mid-upgrade. Clever:
+   it seizes the old election mechanism to disable it.
+4. It then **loads the full ZooKeeper state and writes it into the metadata quorum.** From that
+   moment, **the quorum is the store of record**, not ZK. (No concurrent-modification worry:
+   in the bridge release nothing else writes to ZK.)
+5. During the transition the new controller **watches ZK for legacy broker registrations** and
+   still speaks the old **"push"** protocol to those un-upgraded nodes.
+6. **Roll the brokers.** New brokers never contact ZK; a leftover `zookeeper.connect` in their
+   config is simply **ignored**.
+7. **Roll the controller quorum**, dropping ZK from its config. ZooKeeper is now unused.
+
+---
+
+## 4. Rejected alternative: pluggable consensus
+
+The obvious "why not just support etcd/Consul instead?" question, and the answer is worth
+knowing because it's a good piece of engineering reasoning:
+
+- **It wouldn't achieve either goal.** These systems have **ZooKeeper-like APIs and design
+  goals**, so they still **wouldn't let Kafka treat metadata as an event log** — the whole point.
+  And they'd still be **external systems**, so deployment/configuration stays complex.
+- **Test matrix explosion.** Supporting N metadata backends means either running the full system
+  test suite against every one (huge resource cost) or **leaving some configurations
+  under-tested**. Neither is acceptable.
+- **Least-common-denominator APIs.** You could only use an API if *every* supported backend had
+  it — which makes real optimization impossible.
+
+Note the framing: the objection isn't "etcd is bad," it's **"an external KV store, whatever its
+brand, is the wrong abstraction — we need a log."**
+
+---
+
+## 5. Where the details actually live (follow-on KIPs)
+
+KIP-500 is the vision; these are the specs:
+
+- **KIP-595 — A Raft Protocol for the Metadata Quorum** ← *the actual Raft implementation*
+- **KIP-631 — The Quorum-based Kafka Controller**
+- KIP-455 (replica reassignment API), KIP-497 (inter-broker AlterISR API),
+  KIP-543 / KIP-555 (de-ZooKeeper-ing the tools), KIP-589, KIP-590 (redirect ZK mutations to
+  the controller)
+
+The KIP explicitly cites **Ongaro & Ousterhout's Raft paper**, plus HDFS and Microsoft's **Tango**
+("Distributed Data Structures over a Shared Log") — the latter being the intellectual ancestor of
+"model your system's state as a shared log."
+
+---
+
+## 6. Where things ended up (post-KIP reality, as of 2026)
+
+- KRaft was declared **production-ready in Kafka 3.3.1**, and **ZooKeeper support was removed
+  entirely in Kafka 4.0** — KRaft is now the only supported mode.
+- The metadata log lives in an internal topic: **`__cluster_metadata`**. Because it's a Kafka
+  topic, you can inspect and replay it with ordinary Kafka tooling — a nice side effect of the
+  "metadata as an event log" bet.
+- **Controller failover went from seconds to milliseconds**, exactly as the KIP predicted, because
+  standby controllers are already warm.
+
+---
+
+## 7. How this connects to the Raft notes
+
+If you've read the Raft paper, KRaft maps onto it directly — with **one deliberate inversion**:
+
+| Raft (paper) | KRaft |
+|---|---|
+| Leader **pushes** `AppendEntries` to followers | Controller followers and **brokers pull** via fetch |
+| Heartbeat = empty `AppendEntries` | Heartbeat = the **`MetadataFetch` itself** |
+| Log = generic replicated log | Log = a real Kafka topic (`__cluster_metadata`) |
+| Snapshot + `InstallSnapshot` RPC | Metadata snapshots; full-image send if a broker is too far behind |
+| Commit = replicated to majority | Same — majority of controllers |
+| `2f+1` tolerates `f` failures | Same: 3 controllers → 1 failure, 5 → 2 |
+
+**The push→pull inversion is the thing to be able to explain.** Kafka already had a
+battle-hardened, high-performance **pull-based replication engine** (that's how every consumer
+and every follower replica works). Rather than bolt a second, push-based replication mechanism
+onto the side, KRaft reuses the one Kafka already had — which is also why the metadata log can
+just *be* a topic.
+
+**Interview line:** *"KRaft is Raft with the arrows reversed — followers and brokers fetch from
+the leader by offset, which lets Kafka reuse its existing pull-based replication and makes the
+metadata log a first-class Kafka topic."*
