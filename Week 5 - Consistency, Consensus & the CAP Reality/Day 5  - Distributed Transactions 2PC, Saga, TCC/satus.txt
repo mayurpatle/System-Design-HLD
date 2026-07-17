@@ -1,0 +1,2 @@
+DDIA Chapter 9 — second half on 2PC and distributed transactions.md  - done
+Pattern Saga — the microservices framing.md - done
