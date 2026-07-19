@@ -16,8 +16,6 @@ A globally consistent **"likes" counter** for a viral post.
 
 ---
 
-# Morning (3 hours)
-
 ## Design 1 — Single-leader Postgres with read replicas
 
 Sketch the topology, then specify:
@@ -85,7 +83,6 @@ Sketch the topology, then specify:
 
 ---
 
-# Afternoon (3 hours)
 
 ## Part A — The comparison doc (~4 pages)
 
