@@ -1,41 +1,45 @@
-
-
 ## The Problem
 
 A globally consistent **"likes" counter** for a viral post.
 
-| Parameter | Value |
-|---|---|
-| Peak write rate | 100,000 increments/sec |
-| Peak read rate | 1,000,000 reads/sec |
-| Read:write ratio | 10:1 |
-| Geography | Multi-region |
-| Data shape | Single monotonic integer per post |
+
+| Parameter        | Value                             |
+| ---------------- | --------------------------------- |
+| Peak write rate  | 100,000 increments/sec            |
+| Peak read rate   | 1,000,000 reads/sec               |
+| Read:write ratio | 10:1                              |
+| Geography        | Multi-region                      |
+| Data shape       | Single monotonic integer per post |
+
 
 **Framing question to hold onto all day:** the counter is *monotonic* and increments *commute*. Which of the three designs actually exploits that, and which pay for coordination they don't need?
 
 ---
 
+# Morning (3 hours)
+
 ## Design 1 — Single-leader Postgres with read replicas
 
 Sketch the topology, then specify:
 
-- [ ] **Write path.** Single primary. `UPDATE posts SET likes = likes + 1` vs. an append-only `likes_events` table with periodic rollup. Which one survives 100k/sec, and why does the naive one not?
-- [ ] **Row-level contention.** All 100k writes/sec hit one row → one lock. Quantify the theoretical ceiling. Then apply the standard fix: **sharded counters** (N sub-counters, sum on read). Pick N and justify.
-- [ ] **Replication lag.** Async streaming replication. State a realistic p50/p99 lag figure for same-region and cross-region replicas.
-- [ ] **Consistency on reads.** Name the model precisely. Which session guarantees do you lose? Can a user who just liked the post see their own like? (read-your-writes — how do you fix it, and what does that fix cost?)
+- [x] **Write path.** Single primary. `UPDATE posts SET likes = likes + 1` vs. an append-only `likes_events` table with periodic rollup. Which one survives 100k/sec, and why does the naive one not?
+- [x] **Row-level contention.** All 100k writes/sec hit one row → one lock. Quantify the theoretical ceiling. Then apply the standard fix: **sharded counters** (N sub-counters, sum on read). Pick N and justify.
+- [x] **Replication lag.** Async streaming replication. State a realistic p50/p99 lag figure for same-region and cross-region replicas.
+- [x] **Consistency on reads.** Name the model precisely. Which session guarantees do you lose? Can a user who just liked the post see their own like? (read-your-writes — how do you fix it, and what does that fix cost?)
 - [ ] **Latency estimate.** Write latency (client → primary → fsync → ack). Read latency (client → nearest replica). Show the cross-region penalty explicitly.
 - [ ] **Scaling limit.** At what point does this design fall over, and what's the first thing to break?
 
 **Numbers to fill in**
 
-| Metric | Value | Reasoning |
-|---|---|---|
-| Write latency p50 / p99 | | |
-| Read latency p50 / p99 | | |
-| Max sustainable write throughput | | |
-| Replica lag (same-region / cross-region) | | |
-| Consistency model | | |
+
+| Metric                                   | Value | Reasoning |
+| ---------------------------------------- | ----- | --------- |
+| Write latency p50 / p99                  |       |           |
+| Read latency p50 / p99                   |       |           |
+| Max sustainable write throughput         |       |           |
+| Replica lag (same-region / cross-region) |       |           |
+| Consistency model                        |       |           |
+
 
 ---
 
@@ -51,13 +55,15 @@ Sketch the topology, then specify:
 
 **Numbers to fill in**
 
-| Metric | Value | Reasoning |
-|---|---|---|
-| Cluster size N / tolerated failures f | | |
-| Write latency p50 / p99 | | |
-| Read latency (linearizable / stale) | | |
-| Max sustainable write throughput | | |
-| Consistency model | | |
+
+| Metric                                | Value | Reasoning |
+| ------------------------------------- | ----- | --------- |
+| Cluster size N / tolerated failures f |       |           |
+| Write latency p50 / p99               |       |           |
+| Read latency (linearizable / stale)   |       |           |
+| Max sustainable write throughput      |       |           |
+| Consistency model                     |       |           |
+
 
 ---
 
@@ -73,16 +79,19 @@ Sketch the topology, then specify:
 
 **Numbers to fill in**
 
-| Metric | Value | Reasoning |
-|---|---|---|
-| Write latency p50 / p99 | | |
-| Read latency | | |
-| Max sustainable write throughput | | |
-| Staleness bound | | |
-| Consistency model | | |
+
+| Metric                           | Value | Reasoning |
+| -------------------------------- | ----- | --------- |
+| Write latency p50 / p99          |       |           |
+| Read latency                     |       |           |
+| Max sustainable write throughput |       |           |
+| Staleness bound                  |       |           |
+| Consistency model                |       |           |
+
 
 ---
 
+# Afternoon (3 hours)
 
 ## Part A — The comparison doc (~4 pages)
 
@@ -96,17 +105,19 @@ Structure it as a real design doc, not an essay:
 
 ### Comparison matrix
 
-| Dimension | D1: Postgres + replicas | D2: Raft group | D3: G-Counter CRDT |
-|---|---|---|---|
-| Write latency (p50/p99) | | | |
-| Read latency (p50/p99) | | | |
-| Max write throughput | | | |
-| Max read throughput | | | |
-| Consistency model | | | |
-| Staleness bound | | | |
-| Fault tolerance | | | |
-| Operational complexity | | | |
-| Cost at 1M reads/sec | | | |
+
+| Dimension               | D1: Postgres + replicas | D2: Raft group | D3: G-Counter CRDT |
+| ----------------------- | ----------------------- | -------------- | ------------------ |
+| Write latency (p50/p99) |                         |                |                    |
+| Read latency (p50/p99)  |                         |                |                    |
+| Max write throughput    |                         |                |                    |
+| Max read throughput     |                         |                |                    |
+| Consistency model       |                         |                |                    |
+| Staleness bound         |                         |                |                    |
+| Fault tolerance         |                         |                |                    |
+| Operational complexity  |                         |                |                    |
+| Cost at 1M reads/sec    |                         |                |                    |
+
 
 ---
 
@@ -116,46 +127,55 @@ Work each design through all three scenarios. Don't summarize — say what speci
 
 ### B1. A single node fails
 
-| | Postgres | Raft | CRDT |
-|---|---|---|---|
-| Which node? (primary vs replica / leader vs follower) | | | |
-| Time to detect | | | |
-| Time to recover | | | |
-| Writes during the window | | | |
-| Reads during the window | | | |
-| Data loss? | | | |
+
+|                                                       | Postgres | Raft | CRDT |
+| ----------------------------------------------------- | -------- | ---- | ---- |
+| Which node? (primary vs replica / leader vs follower) |          |      |      |
+| Time to detect                                        |          |      |      |
+| Time to recover                                       |          |      |      |
+| Writes during the window                              |          |      |      |
+| Reads during the window                               |          |      |      |
+| Data loss?                                            |          |      |      |
+
 
 Prompts:
+
 - Postgres: primary failure → failover. Automatic or manual? How much committed-but-unreplicated data is lost with async replication? Where does split brain come from, and what's your fencing story?
 - Raft: leader failure → election. Bound the unavailability window (election timeout + election round). Is any *committed* data at risk? (No — say why: the election restriction.)
 - CRDT: node failure → its counter contribution is temporarily invisible. Is the value wrong, or just stale? What happens to increments that were local-only and unreplicated when the disk died?
 
 ### B2. A region is partitioned
 
-| | Postgres | Raft | CRDT |
-|---|---|---|---|
-| Minority side: writes | | | |
-| Minority side: reads | | | |
-| Majority side | | | |
-| Behavior on heal | | | |
-| CAP classification | | | |
+
+|                       | Postgres | Raft | CRDT |
+| --------------------- | -------- | ---- | ---- |
+| Minority side: writes |          |      |      |
+| Minority side: reads  |          |      |      |
+| Majority side         |          |      |      |
+| Behavior on heal      |          |      |      |
+| CAP classification    |          |      |      |
+
 
 Prompts:
+
 - Postgres: does the partitioned replica serve unboundedly stale reads? Does anyone promote a second primary?
 - Raft: minority side is **unavailable for writes** — that's the CP choice. Can it serve reads? Only stale ones. Is that acceptable for a likes counter?
 - CRDT: **both sides keep accepting writes.** Both are "wrong" (each undercounts) but neither is inconsistent. On heal, merge converges. Show the merge arithmetic with a concrete two-region example.
 
 ### B3. Workload spikes 10x (1M writes/sec, 10M reads/sec)
 
-| | Postgres | Raft | CRDT |
-|---|---|---|---|
-| First bottleneck to break | | | |
-| Failure mode (degrade vs collapse) | | | |
-| Backpressure mechanism | | | |
-| Scaling lever available | | | |
-| Time to apply that lever | | | |
+
+|                                    | Postgres | Raft | CRDT |
+| ---------------------------------- | -------- | ---- | ---- |
+| First bottleneck to break          |          |      |      |
+| Failure mode (degrade vs collapse) |          |      |      |
+| Backpressure mechanism             |          |      |      |
+| Scaling lever available            |          |      |      |
+| Time to apply that lever           |          |      |      |
+
 
 Prompts:
+
 - Which designs degrade *gracefully* (higher staleness, same availability) versus *catastrophically* (queue buildup, timeouts, cascading retries)?
 - Which one scales horizontally without a schema change or a re-shard?
 - Where does a write-ahead buffer (Kafka / Redis) belong in each, and does adding it just turn D1 into D3 with extra steps?
@@ -167,17 +187,20 @@ Prompts:
 For each workload, name the pick, then give the **one-sentence reason** and the **one thing you're giving up**.
 
 ### C1. Real-time viral post counter
+
 **Pick:** ___
 **Because:** commutative, monotonic, and nobody is harmed by being 300ms behind.
 **Giving up:** ___
 
 ### C2. Bank balance
+
 **Pick:** ___
 **Because:** ___
 **Giving up:** ___
 *Push yourself here — is a raw Raft counter actually the right answer for a balance, or do you want a replicated **ledger** (append-only entries) with the balance as a derived fold? Argue it.*
 
 ### C3. Analytics counter that can lose a few seconds
+
 **Pick:** ___
 **Because:** ___
 **Giving up:** ___
@@ -213,3 +236,4 @@ Explain how a likes counter, a bank balance, and a page-view metric are all "a n
 - [[consistency-models]]
 - [[quorum-systems]]
 - [[cap-pacelc]]
+

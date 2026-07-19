@@ -25,19 +25,19 @@ A problem like "Uber Dispatch" appears in Week 1 (estimate it), Week 2 (where do
 
 These are the "first 5 you estimate on Day 6" per the curriculum:
 
-- 🟢 **Design Instagram** (Photo Sharing + Social Features) — `Social`
-- 🟡 **Design a Real-Time Chat Application (WhatsApp / Slack)** — `Messaging`
-- 🟡 **Design a Ride-Hailing Service (Uber)** — `Geo Location`
-- 🔴 **Design an Email Service (like Gmail)** — `Messaging`
-- 🟡 **Design a Video Streaming Platform (YouTube / Netflix)** — `Media Streaming`
+- [ ] 🟢 **Design Instagram** (Photo Sharing + Social Features) — `Social`
+- [ ] 🟡 **Design a Real-Time Chat Application (WhatsApp / Slack)** — `Messaging`
+- [ ] 🟡 **Design a Ride-Hailing Service (Uber)** — `Geo Location`
+- [ ] 🔴 **Design an Email Service (like Gmail)** — `Messaging`
+- [ ] 🟡 **Design a Video Streaming Platform (YouTube / Netflix)** — `Media Streaming`
 
 ### Additional Estimation Targets (5 more for Day 6 drill)
 
-- 🔴 **Design TikTok (Short Video Platform)** — `Social`
-- 🟢 **Design a Music Streaming Service (Spotify)** — `Media Streaming`
-- 🟡 **Design a Food Delivery Platform (DoorDash / Zomato)** — `Commerce Marketplace`
-- 🟡 **Design an E-Commerce Platform (Amazon / Flipkart)** — `Commerce Marketplace`
-- 🟢 **Design Google Typeahead / Autocomplete** — `Search`
+- [ ] 🔴 **Design TikTok (Short Video Platform)** — `Social`
+- [ ] 🟢 **Design a Music Streaming Service (Spotify)** — `Media Streaming`
+- [ ] 🟡 **Design a Food Delivery Platform (DoorDash / Zomato)** — `Commerce Marketplace`
+- [ ] 🟡 **Design an E-Commerce Platform (Amazon / Flipkart)** — `Commerce Marketplace`
+- [ ] 🟢 **Design Google Typeahead / Autocomplete** — `Search`
 
 **Note**: every problem in the bank should be estimable by end of Week 1. The five above are the canonical drills.
 
@@ -49,17 +49,17 @@ These are the "first 5 you estimate on Day 6" per the curriculum:
 
 ### Core Problems
 
-- 🟡 **Design a Key-Value Store** — `Storage` — pure Dynamo-paper depth
-- 🟢 **Design Pastebin** — `Web Services` — object store + metadata DB + signed URLs
-- 🔴 **Design a Time-Series Database** — `Storage` — Gorilla compression, retention, downsampling intuition
-- 🔴 **Design a Blob Storage System (like S3)** — `Storage` — object store at scale, sharding by prefix
-- 🔴 **Design a Relational Database (PostgreSQL)** — `Storage` — MVCC, WAL, B+ tree mastery
-- 🔴 **Design a Social Graph Store** — `Storage` — graph DB vs Postgres recursive CTE trade-off
-- 🟡 **Design a Distributed Cache (Redis / Memcached)** — `Infrastructure` — though deeper in Week 3
+- [ ] 🟡 **Design a Key-Value Store** — `Storage` — pure Dynamo-paper depth
+- [ ] 🟢 **Design Pastebin** — `Web Services` — object store + metadata DB + signed URLs
+- [ ] 🔴 **Design a Time-Series Database** — `Storage` — Gorilla compression, retention, downsampling intuition
+- [ ] 🔴 **Design a Blob Storage System (like S3)** — `Storage` — object store at scale, sharding by prefix
+- [ ] 🔴 **Design a Relational Database (PostgreSQL)** — `Storage` — MVCC, WAL, B+ tree mastery
+- [ ] 🔴 **Design a Social Graph Store** — `Storage` — graph DB vs Postgres recursive CTE trade-off
+- [ ] 🟡 **Design a Distributed Cache (Redis / Memcached)** — `Infrastructure` — though deeper in Week 3
 
 ### Stretch (requires Week 5 too)
 
-- 🔴 **Design a Distributed Banking Ledger System** — `Fintech` — append-only ledger + storage + consistency
+- [ ] 🔴 **Design a Distributed Banking Ledger System** — `Fintech` — append-only ledger + storage + consistency
 
 ---
 
@@ -69,19 +69,19 @@ These are the "first 5 you estimate on Day 6" per the curriculum:
 
 ### Core Problems
 
-- 🟢 **Design a URL Shortener (TinyURL / Bit.ly)** — `Web Services` — read-heavy, cache 99% hit ratio math
-- 🟡 **Design a Content Delivery Network (CDN)** — `Infrastructure` — the canonical CDN design
-- 🟡 **Design a Distributed Cache (Redis / Memcached)** — `Infrastructure` — eviction policies, sharding, hot keys
-- 🟡 **Design Top K Rankings System (App Store / Amazon Bestsellers)** — `Data Analytics` — pre-aggregation + caching
-- 🟡 **Design a Trending Topics System** — `Data Analytics` — sliding window + cache
-- 🟡 **Design Top K Most Shared Articles** — `Data Analytics`
-- 🔴 **Design Like Count for High Profile Users** — `Data Analytics` — hot key problem at its worst
-- 🟡 **Design a Leaderboard System** — `Data Analytics` — Redis sorted sets + caching tiers
+- [ ] 🟢 **Design a URL Shortener (TinyURL / Bit.ly)** — `Web Services` — read-heavy, cache 99% hit ratio math
+- [ ] 🟡 **Design a Content Delivery Network (CDN)** — `Infrastructure` — the canonical CDN design
+- [ ] 🟡 **Design a Distributed Cache (Redis / Memcached)** — `Infrastructure` — eviction policies, sharding, hot keys
+- [ ] 🟡 **Design Top K Rankings System (App Store / Amazon Bestsellers)** — `Data Analytics` — pre-aggregation + caching
+- [ ] 🟡 **Design a Trending Topics System** — `Data Analytics` — sliding window + cache
+- [ ] 🟡 **Design Top K Most Shared Articles** — `Data Analytics`
+- [ ] 🔴 **Design Like Count for High Profile Users** — `Data Analytics` — hot key problem at its worst
+- [ ] 🟡 **Design a Leaderboard System** — `Data Analytics` — Redis sorted sets + caching tiers
 
 ### Stretch (needs Week 4 fanout)
 
-- 🟡 **Design a News Feed System (Facebook / Instagram)** — push vs pull, celebrity problem
-- 🟢 **Design a Timeline and Tweet Service (Twitter)** — fanout strategy
+- [ ] 🟡 **Design a News Feed System (Facebook / Instagram)** — push vs pull, celebrity problem
+- [ ] 🟢 **Design a Timeline and Tweet Service (Twitter)** — fanout strategy
 
 ---
 
@@ -91,20 +91,20 @@ These are the "first 5 you estimate on Day 6" per the curriculum:
 
 ### Core Problems
 
-- 🟢 **Design a Notification System (Push, Email, SMS)** — `Infrastructure` — the canonical async pipeline
-- 🟡 **Design a Distributed Message Broker (Kafka-style)** — `Infrastructure` — covered deeper in Week 6
-- 🟡 **Design a Distributed Worker Queue (RabbitMQ / SQS)** — `Infrastructure`
-- 🟡 **Design a Distributed Stream Processing System (Apache Flink)** — `Data Analytics`
-- 🟡 **Design a Distributed Job Scheduler (Quartz / Airflow)** — `Infrastructure`
-- 🟡 **Design an Event Sourcing System** — `Infrastructure`
-- 🔴 **Design a Change Data Capture (CDC) Pipeline** — `Data Analytics` — Debezium + outbox at scale
-- 🔴 **Design a Workflow Orchestration Engine (like Temporal/Cadence)** — `Infrastructure` — sagas in production
+- [ ] 🟢 **Design a Notification System (Push, Email, SMS)** — `Infrastructure` — the canonical async pipeline
+- [ ] 🟡 **Design a Distributed Message Broker (Kafka-style)** — `Infrastructure` — covered deeper in Week 6
+- [ ] 🟡 **Design a Distributed Worker Queue (RabbitMQ / SQS)** — `Infrastructure`
+- [ ] 🟡 **Design a Distributed Stream Processing System (Apache Flink)** — `Data Analytics`
+- [ ] 🟡 **Design a Distributed Job Scheduler (Quartz / Airflow)** — `Infrastructure`
+- [ ] 🟡 **Design an Event Sourcing System** — `Infrastructure`
+- [ ] 🔴 **Design a Change Data Capture (CDC) Pipeline** — `Data Analytics` — Debezium + outbox at scale
+- [ ] 🔴 **Design a Workflow Orchestration Engine (like Temporal/Cadence)** — `Infrastructure` — sagas in production
 
 ### Stretch (now you have the outbox pattern)
 
-- 🟡 **Design a Ticketing System (BookMyShow / TicketMaster)** — seat locking + payment saga
-- 🟡 **Design a Shopping Cart System** — event-sourced
-- 🟡 **Design an Order Management System** — saga + outbox
+- [ ] 🟡 **Design a Ticketing System (BookMyShow / TicketMaster)** — seat locking + payment saga
+- [ ] 🟡 **Design a Shopping Cart System** — event-sourced
+- [ ] 🟡 **Design an Order Management System** — saga + outbox
 
 ---
 
@@ -116,15 +116,15 @@ These are the "first 5 you estimate on Day 6" per the curriculum:
 
 ### Core Problems
 
-- 🔴 **Design a Distributed Consensus System (Raft / Paxos)** — `Infrastructure` — implement the protocol
-- 🔴 **Design a Distributed Coordination Service (ZooKeeper)** — `Infrastructure` — consensus in practice
-- 🟡 **Design a Distributed Lock Manager** — `Infrastructure` — Redlock vs Chubby vs etcd
-- 🟡 **Design a Service Discovery System** — `Infrastructure` — consistency vs availability trade-off
+- [ ] 🔴 **Design a Distributed Consensus System (Raft / Paxos)** — `Infrastructure` — implement the protocol
+- [ ] 🔴 **Design a Distributed Coordination Service (ZooKeeper)** — `Infrastructure` — consensus in practice
+- [ ] 🟡 **Design a Distributed Lock Manager** — `Infrastructure` — Redlock vs Chubby vs etcd
+- [ ] 🟡 **Design a Service Discovery System** — `Infrastructure` — consistency vs availability trade-off
 
 ### Returns Deeper
 
-- 🔴 **Design Google Docs (Real-Time Collaborative Editing)** — `Realtime` — CRDT vs OT (full depth in Week 9)
-- 🔴 **Design a Distributed Banking Ledger System** — `Fintech` — consistency requirements drive the design
+- [ ] 🔴 **Design Google Docs (Real-Time Collaborative Editing)** — `Realtime` — CRDT vs OT (full depth in Week 9)
+- [ ] 🔴 **Design a Distributed Banking Ledger System** — `Fintech` — consistency requirements drive the design
 
 ---
 
@@ -134,14 +134,14 @@ These are the "first 5 you estimate on Day 6" per the curriculum:
 
 ### Core (return to with depth)
 
-- 🟡 **Design a Distributed Message Broker (Kafka-style)** — now with leader epochs, ISR, transaction coordinator
-- 🟡 **Design an Event Sourcing System** — Kafka-as-source-of-truth pattern
-- 🔴 **Design a Change Data Capture (CDC) Pipeline** — Debezium + KRaft + idempotent consumers
+- [ ] 🟡 **Design a Distributed Message Broker (Kafka-style)** — now with leader epochs, ISR, transaction coordinator
+- [ ] 🟡 **Design an Event Sourcing System** — Kafka-as-source-of-truth pattern
+- [ ] 🔴 **Design a Change Data Capture (CDC) Pipeline** — Debezium + KRaft + idempotent consumers
 
 ### Stretch (Kafka becomes the substrate)
 
-- 🔴 **Design a Real-Time Bidding System (Ad Tech)** — Kafka for impression logging
-- 🟡 **Design a Distributed Tracing System (like Jaeger / Zipkin)** — Kafka for span ingestion
+- [ ] 🔴 **Design a Real-Time Bidding System (Ad Tech)** — Kafka for impression logging
+- [ ] 🟡 **Design a Distributed Tracing System (like Jaeger / Zipkin)** — Kafka for span ingestion
 
 ---
 
@@ -151,11 +151,11 @@ These are the "first 5 you estimate on Day 6" per the curriculum:
 
 ### Core Problems
 
-- 🟢 **Design an API Rate Limiter** — `Infrastructure` — the canonical design exercise
-- 🟢 **Design a Load Balancer** — `Infrastructure` — L4 vs L7, consistent hashing
-- 🔴 **Design an API Gateway (Kong / Envoy)** — `Infrastructure`
-- 🟡 **Design a Circuit Breaker** — `Infrastructure` — Resilience4j patterns
-- 🟡 **Design a Service Discovery System** — `Infrastructure` (also in Week 5)
+- [ ] 🟢 **Design an API Rate Limiter** — `Infrastructure` — the canonical design exercise
+- [ ] 🟢 **Design a Load Balancer** — `Infrastructure` — L4 vs L7, consistent hashing
+- [ ] 🔴 **Design an API Gateway (Kong / Envoy)** — `Infrastructure`
+- [ ] 🟡 **Design a Circuit Breaker** — `Infrastructure` — Resilience4j patterns
+- [ ] 🟡 **Design a Service Discovery System** — `Infrastructure` (also in Week 5)
 
 ---
 
@@ -165,24 +165,24 @@ These are the "first 5 you estimate on Day 6" per the curriculum:
 
 ### Core Problems
 
-- 🟡 **Design a Search Engine (Google)** — `Search` — inverted index + ranking + crawling
-- 🟢 **Design Google Typeahead / Autocomplete** — `Search` — trie + caching + ranking
-- 🟡 **Design a Web Crawler (Googlebot)** — `Data Analytics`
-- 🟡 **Design Quora (Q&A Platform)** — `Search` — search + ranking + Q-A scoring
-- 🔴 **Design a Log Aggregation and Search System (like Splunk / ELK)** — `Observability` — Lucene at scale
-- 🔴 **Design a Search Ranking System (Learning to Rank)** — `Machine Learning` — multi-stage retrieval
-- 🔴 **Design an ML Feature Store** — `Machine Learning` — online + offline + freshness
+- [ ] 🟡 **Design a Search Engine (Google)** — `Search` — inverted index + ranking + crawling
+- [ ] 🟢 **Design Google Typeahead / Autocomplete** — `Search` — trie + caching + ranking
+- [ ] 🟡 **Design a Web Crawler (Googlebot)** — `Data Analytics`
+- [ ] 🟡 **Design Quora (Q&A Platform)** — `Search` — search + ranking + Q-A scoring
+- [ ] 🔴 **Design a Log Aggregation and Search System (like Splunk / ELK)** — `Observability` — Lucene at scale
+- [ ] 🔴 **Design a Search Ranking System (Learning to Rank)** — `Machine Learning` — multi-stage retrieval
+- [ ] 🔴 **Design an ML Feature Store** — `Machine Learning` — online + offline + freshness
 
 ### Stretch (your secondary depth)
 
-- 🔴 **Design a Document Q&A Platform (RAG System)** — `Ai Applied Systems` — *this is AutoOps territory; lean in*
-- 🔴 **Design an LLM Chat Application (ChatGPT)** — `Ai Applied Systems` — RAG + serving + safety
-- 🔴 **Design an AI Coding Assistant (Cursor / Claude Code)** — `Ai Applied Systems`
+- [ ] 🔴 **Design a Document Q&A Platform (RAG System)** — `Ai Applied Systems` — *this is AutoOps territory; lean in*
+- [ ] 🔴 **Design an LLM Chat Application (ChatGPT)** — `Ai Applied Systems` — RAG + serving + safety
+- [ ] 🔴 **Design an AI Coding Assistant (Cursor / Claude Code)** — `Ai Applied Systems`
 
 ### Returns Deeper
 
-- 🔴 **Design a Recommendation System (Netflix / TikTok Style)** — `Machine Learning` — candidate gen + rerank
-- 🔴 **Design a Video Recommendation Engine** — `Machine Learning`
+- [ ] 🔴 **Design a Recommendation System (Netflix / TikTok Style)** — `Machine Learning` — candidate gen + rerank
+- [ ] 🔴 **Design a Video Recommendation Engine** — `Machine Learning`
 
 ---
 
@@ -194,38 +194,38 @@ These are the "first 5 you estimate on Day 6" per the curriculum:
 
 ### Core Problems
 
-- 🟡 **Design a Ride-Hailing Service (Uber)** — `Geo Location` — **the canonical Week 9 problem**
-- 🔴 **Design Google Docs (Real-Time Collaborative Editing)** — `Realtime` — OT vs CRDT
-- 🔴 **Design a Video Conferencing System (like Zoom)** — `Realtime` — SFU vs MCU
-- 🔴 **Design a Live Streaming Platform like Twitch** — `Media Streaming` — HLS, multi-CDN
-- 🟡 **Design a Real-Time Chat Application (WhatsApp / Slack)** — `Messaging` — fanout + presence
-- 🟡 **Design a Food Delivery Platform (DoorDash / Zomato)** — `Commerce` — Uber-shaped
-- 🟡 **Design a Proximity Server (Yelp / Nearby Friends)** — `Geo Location` — geo-indexing
-- 🟡 **Design a Geofencing Service** — `Geo Location` — H3/S2 cells
-- 🟡 **Design a Real-time Vehicle Tracking System** — `Geo Location`
-- 🟡 **Design Foursquare (Check-ins and Recommendations)** — `Geo Location`
-- 🔴 **Design an ETA Calculation Service** — `Geo Location` — ML + road network
-- 🔴 **Design a Map Rendering and Navigation System like Google Maps** — `Geo Location`
-- 🔴 **Design Tinder (Matching System)** — `Geo Location` — geo + matching
-- 🟡 **Design a Bike Sharing System like Citi Bike** — `Commerce` — Uber-lite
+- [ ] 🟡 **Design a Ride-Hailing Service (Uber)** — `Geo Location` — **the canonical Week 9 problem**
+- [ ] 🔴 **Design Google Docs (Real-Time Collaborative Editing)** — `Realtime` — OT vs CRDT
+- [ ] 🔴 **Design a Video Conferencing System (like Zoom)** — `Realtime` — SFU vs MCU
+- [ ] 🔴 **Design a Live Streaming Platform like Twitch** — `Media Streaming` — HLS, multi-CDN
+- [ ] 🟡 **Design a Real-Time Chat Application (WhatsApp / Slack)** — `Messaging` — fanout + presence
+- [ ] 🟡 **Design a Food Delivery Platform (DoorDash / Zomato)** — `Commerce` — Uber-shaped
+- [ ] 🟡 **Design a Proximity Server (Yelp / Nearby Friends)** — `Geo Location` — geo-indexing
+- [ ] 🟡 **Design a Geofencing Service** — `Geo Location` — H3/S2 cells
+- [ ] 🟡 **Design a Real-time Vehicle Tracking System** — `Geo Location`
+- [ ] 🟡 **Design Foursquare (Check-ins and Recommendations)** — `Geo Location`
+- [ ] 🔴 **Design an ETA Calculation Service** — `Geo Location` — ML + road network
+- [ ] 🔴 **Design a Map Rendering and Navigation System like Google Maps** — `Geo Location`
+- [ ] 🔴 **Design Tinder (Matching System)** — `Geo Location` — geo + matching
+- [ ] 🟡 **Design a Bike Sharing System like Citi Bike** — `Commerce` — Uber-lite
 
 ### Realtime Add-Ons
 
-- 🟡 **Design Live Likes & Reactions** — `Realtime` — fanout at scale
-- 🟡 **Design a User Presence System** — `Messaging` — heartbeats + Redis TTL
-- 🔴 **Design a Live Comments System (like Facebook Live / YouTube Live)** — `Realtime`
-- 🔴 **Design a Multiplayer Game Backend** — `Realtime` — tick loops + state sync
-- 🟡 **Design a Shared Calendar System (like Google Calendar)** — `Realtime` — concurrent edits
-- 🟡 **Design Ephemeral Stories (Instagram Stories)** — `Social` — TTL + fanout
+- [ ] 🟡 **Design Live Likes & Reactions** — `Realtime` — fanout at scale
+- [ ] 🟡 **Design a User Presence System** — `Messaging` — heartbeats + Redis TTL
+- [ ] 🔴 **Design a Live Comments System (like Facebook Live / YouTube Live)** — `Realtime`
+- [ ] 🔴 **Design a Multiplayer Game Backend** — `Realtime` — tick loops + state sync
+- [ ] 🟡 **Design a Shared Calendar System (like Google Calendar)** — `Realtime` — concurrent edits
+- [ ] 🟡 **Design Ephemeral Stories (Instagram Stories)** — `Social` — TTL + fanout
 
 ### Streaming Returns
 
-- 🟡 **Design a Video Streaming Platform (YouTube / Netflix)** — full depth at this scale
-- 🟡 **Design a Music Streaming Service (Spotify)** — `Media Streaming`
-- 🟡 **Design a Podcast Delivery Platform** — `Media Streaming`
-- 🟡 **Design an Image Processing Pipeline** — `Media Streaming`
-- 🟡 **Design a Thumbnail Generation Service** — `Media Streaming`
-- 🔴 **Design a Video Transcoding Pipeline** — `Media Streaming`
+- [ ] 🟡 **Design a Video Streaming Platform (YouTube / Netflix)** — full depth at this scale
+- [ ] 🟡 **Design a Music Streaming Service (Spotify)** — `Media Streaming`
+- [ ] 🟡 **Design a Podcast Delivery Platform** — `Media Streaming`
+- [ ] 🟡 **Design an Image Processing Pipeline** — `Media Streaming`
+- [ ] 🟡 **Design a Thumbnail Generation Service** — `Media Streaming`
+- [ ] 🔴 **Design a Video Transcoding Pipeline** — `Media Streaming`
 
 ---
 
@@ -235,51 +235,51 @@ These are the "first 5 you estimate on Day 6" per the curriculum:
 
 ### Core Problems — Payments & Ledgers
 
-- 🟡 **Design a Payment Gateway (Handling ACID Transactions)** — `Fintech` — **the canonical Week 10 problem**
-- 🔴 **Design a Distributed Banking Ledger System** — `Fintech` — double-entry from the ground up
-- 🟡 **Design a Multi-Currency Payment System** — `Fintech` — FX snapshots
-- 🔴 **Design a Digital Wallet System** — `Fintech` — Paytm/PhonePe-style
-- 🔴 **Design a Stock Exchange Matching Engine** — `Fintech` — order book + sequencer + replay
-- 🔴 **Design a Cryptocurrency Exchange** — `Fintech` — matching + custody + ledger
-- 🔴 **Design a Fraud Detection System** — `Machine Learning` — pre-bid + post-bid filters
+- [ ] 🟡 **Design a Payment Gateway (Handling ACID Transactions)** — `Fintech` — **the canonical Week 10 problem**
+- [ ] 🔴 **Design a Distributed Banking Ledger System** — `Fintech` — double-entry from the ground up
+- [ ] 🟡 **Design a Multi-Currency Payment System** — `Fintech` — FX snapshots
+- [ ] 🔴 **Design a Digital Wallet System** — `Fintech` — Paytm/PhonePe-style
+- [ ] 🔴 **Design a Stock Exchange Matching Engine** — `Fintech` — order book + sequencer + replay
+- [ ] 🔴 **Design a Cryptocurrency Exchange** — `Fintech` — matching + custody + ledger
+- [ ] 🔴 **Design a Fraud Detection System** — `Machine Learning` — pre-bid + post-bid filters
 
 ### Core Problems — Ads
 
-- 🔴 **Design a Real-Time Bidding System (Ad Tech)** — `Data Analytics` — 100ms SLA
-- 🔴 **Design an Ad Click Prediction System** — `Machine Learning` — feature store + serving
+- [ ] 🔴 **Design a Real-Time Bidding System (Ad Tech)** — `Data Analytics` — 100ms SLA
+- [ ] 🔴 **Design an Ad Click Prediction System** — `Machine Learning` — feature store + serving
 
 ### Core Problems — Public APIs
 
-- 🟢 **Design an API Rate Limiter** — returns here at 1M RPS with multi-tier (also Week 7)
-- 🟡 **Design a Review and Rating System** — `Commerce` — abuse-resistant
-- 🟡 **Design a Coupon and Discount Engine** — `Commerce` — fraud-resistant
-- 🟡 **Design a Price Comparison Engine** — `Commerce`
+- [ ] 🟢 **Design an API Rate Limiter** — returns here at 1M RPS with multi-tier (also Week 7)
+- [ ] 🟡 **Design a Review and Rating System** — `Commerce` — abuse-resistant
+- [ ] 🟡 **Design a Coupon and Discount Engine** — `Commerce` — fraud-resistant
+- [ ] 🟡 **Design a Price Comparison Engine** — `Commerce`
 
 ### Core Problems — Observability
 
-- 🟡 **Design a Distributed Tracing System (like Jaeger / Zipkin)** — `Observability`
-- 🟡 **Design a Distributed Metrics Aggregation System** — `Observability` — cardinality control
-- 🟡 **Design a Real-time Dashboard and Metrics System** — `Observability`
-- 🔴 **Design a User Analytics Pipeline (like Google Analytics)** — `Data Analytics`
-- 🔴 **Design a Log Aggregation and Search System (like Splunk / ELK)** — `Observability` (also Week 8)
-- 🟡 **Design a Feature Flag System** — `Observability` — LaunchDarkly-shape
-- 🟡 **Design an On-Call Escalation System (like PagerDuty / OpsGenie)** — `Observability`
+- [ ] 🟡 **Design a Distributed Tracing System (like Jaeger / Zipkin)** — `Observability`
+- [ ] 🟡 **Design a Distributed Metrics Aggregation System** — `Observability` — cardinality control
+- [ ] 🟡 **Design a Real-time Dashboard and Metrics System** — `Observability`
+- [ ] 🔴 **Design a User Analytics Pipeline (like Google Analytics)** — `Data Analytics`
+- [ ] 🔴 **Design a Log Aggregation and Search System (like Splunk / ELK)** — `Observability` (also Week 8)
+- [ ] 🟡 **Design a Feature Flag System** — `Observability` — LaunchDarkly-shape
+- [ ] 🟡 **Design an On-Call Escalation System (like PagerDuty / OpsGenie)** — `Observability`
 
 ### Security
 
-- 🔴 **Design an Authentication and Authorization System (OAuth 2.0/SSO)** — `Security` — JWT, OIDC
-- 🔴 **Design a Content Moderation System** — `Security` — ML + queue
+- [ ] 🔴 **Design an Authentication and Authorization System (OAuth 2.0/SSO)** — `Security` — JWT, OIDC
+- [ ] 🔴 **Design a Content Moderation System** — `Security` — ML + queue
 
 ### Commerce Returns Deeper
 
-- 🟡 **Design an E-Commerce Platform (Amazon / Flipkart)** — now with full saga + payment ledger depth
-- 🟡 **Design a Shopping Cart System** — saga + idempotency
-- 🟡 **Design an Order Management System** — state machine + outbox
-- 🟡 **Design a Ticketing System (BookMyShow / TicketMaster)** — seat locking + payment ledger
-- 🔴 **Design an Inventory Management System** — concurrent stock updates
-- 🔴 **Design a Flash Sale System** — race + queueing + Redis SETNX
-- 🔴 **Design a Surge Pricing System like Uber or Lyft** — separate pipeline like Week 9 surge
-- 🟡 **Design a Hotel Booking System** — inventory + payment saga
+- [ ] 🟡 **Design an E-Commerce Platform (Amazon / Flipkart)** — now with full saga + payment ledger depth
+- [ ] 🟡 **Design a Shopping Cart System** — saga + idempotency
+- [ ] 🟡 **Design an Order Management System** — state machine + outbox
+- [ ] 🟡 **Design a Ticketing System (BookMyShow / TicketMaster)** — seat locking + payment ledger
+- [ ] 🔴 **Design an Inventory Management System** — concurrent stock updates
+- [ ] 🔴 **Design a Flash Sale System** — race + queueing + Redis SETNX
+- [ ] 🔴 **Design a Surge Pricing System like Uber or Lyft** — separate pipeline like Week 9 surge
+- [ ] 🟡 **Design a Hotel Booking System** — inventory + payment saga
 
 ---
 
